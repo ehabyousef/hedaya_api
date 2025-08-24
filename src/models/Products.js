@@ -50,5 +50,9 @@ productsSchema.virtual("finalPrice").get(function () {
   return val.toFixed(2);
 });
 
+productsSchema.method.inStock = function (quantity) {
+  return this.availableItems >= quantity ? true : false;
+};
+
 const Product = mongoose.models.Product || model("Product", productsSchema);
 export default Product;
