@@ -168,8 +168,8 @@ export const updateProduc = expressAsyncHandler(async (req, res) => {
     updateObj.subCategory = req.body.subCategory;
 
   if (req.files?.defaultImage[0]) {
-    const newone = await handleImageUpdate(req.files.defaultImage[0], exist);
-    updateObj.defaultImage = newone;
+    const newImage = await handleImageUpdate(req.files.defaultImage[0], exist);
+    updateObj.defaultImage = newImage;
   }
 
   if (req.files.images && req.files.length > 0) {

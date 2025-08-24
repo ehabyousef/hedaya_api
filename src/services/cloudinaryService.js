@@ -11,34 +11,19 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-console.log("Cloudinary credentials:");
-console.log(
-  "Cloud name:",
-  process.env.CLOUDINARY_CLOUD_NAME ? "✓ Found" : "❌ Missing"
-);
-console.log(
-  "API key:",
-  process.env.CLOUDINARY_API_KEY ? "✓ Found" : "❌ Missing"
-);
-console.log(
-  "API secret:",
-  process.env.CLOUDINARY_API_SECRET ? "✓ Found" : "❌ Missing"
-);
-
 export const uploadSingleImage = async (file, folder = "hedaya") => {
   try {
     if (!file) return;
-    const b64 = Buffer.from(file.buffer).toString("base64");
-    const dataURI = `data:${file.mimetype};base64,${b64}`;
+    // const b64 = Buffer.from(file.buffer).toString("base64");
+    // const dataURI = `data:${file.mimetype};base64,${b64}`;
 
     //   upload to cloudinary
-    const result = await cloudinary.uploader.upload(dataURI, {
+    const result = await cloudinary.uploader.upload(file.path, {
       folder,
       resource_type: "auto",
     });
 
     // response from cloudinary
-
     return {
       id: result.public_id,
       url: result.secure_url,
@@ -90,6 +75,7 @@ export const deleteImage = async (public_Id) => {
     throw new Error(`failed to delete image: ${error.message}`);
   }
 };
+
 export const deleteMultipleImages = async (public_Ids) => {
   try {
     if (!public_Ids || !public_Ids.length) return [];
