@@ -14,16 +14,17 @@ cloudinary.config({
 export const uploadSingleImage = async (file, folder = "hedaya") => {
   try {
     if (!file) return;
-    // const b64 = Buffer.from(file.buffer).toString("base64");
-    // const dataURI = `data:${file.mimetype};base64,${b64}`;
+    const b64 = Buffer.from(file.buffer).toString("base64");
+    const dataURI = `data:${file.mimetype};base64,${b64}`;
 
     //   upload to cloudinary
-    const result = await cloudinary.uploader.upload(file.path, {
+    const result = await cloudinary.uploader.upload(dataURI, {
       folder,
       resource_type: "auto",
     });
 
     // response from cloudinary
+
     return {
       id: result.public_id,
       url: result.secure_url,
@@ -82,7 +83,7 @@ export const deleteMultipleImages = async (public_Ids) => {
     const results = [];
     for (let i = 0; i < public_Ids.length; i++) {
       try {
-        const result = await deleteImage(i);
+        const result = await deleteImage(public_Ids[i]);
         results.push(result);
       } catch (error) {
         return {
