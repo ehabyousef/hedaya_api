@@ -15,7 +15,7 @@ const productsSchema = new Schema(
     price: { type: Number, required: true, min: 0 }, // e.g. 70
     discount: { type: Number, default: 0, min: 0, max: 100 }, // e.g. 11 -> 11%
 
-    favourite: { type: Boolean, default: false },
+    // favourite: { type: Boolean, default: false },
     status: {
       type: String,
       enum: ["new", "used", "out_of_stock"],

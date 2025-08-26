@@ -3,6 +3,7 @@ import {
   addToCart,
   getAllCart,
   removeFromCart,
+  updateCartQuantity,
 } from "../controllers/cartController.js";
 import { verifyTokenAndAuthorization } from "../middlewares/verifyToken.js";
 
@@ -13,3 +14,4 @@ cartRoute.use(verifyTokenAndAuthorization);
 cartRoute.post("/addToCart", addToCart);
 cartRoute.get("/allCart", getAllCart);
 cartRoute.post("/removeFromCart", removeFromCart);
+cartRoute.post("/updateQuantity", updateCartQuantity);

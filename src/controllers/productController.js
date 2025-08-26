@@ -11,6 +11,7 @@ import {
 import { productValidator } from "../utils/productValidation.js";
 import slugify from "slugify";
 import mongoose from "mongoose";
+import User from "../models/User.js";
 // import { productValidator } from "../utils/productValidation.js";
 
 export const createProduct = expressAsyncHandler(async (req, res) => {
@@ -202,4 +203,59 @@ export const deleteProduct = expressAsyncHandler(async (req, res) => {
     res.status(404).json({ message: "product not found" });
   }
   res.status(200).json({ message: "product deleted" });
+});
+
+export const addToWishlist = expressAsyncHandler(async (req, res) => {
+  const product = await Product.findById(req.params.id);
+  if (!product) {
+    return res
+      .status(404)
+      .json({ status: "fail", message: "Product not found" });
+  }
+
+  const user = await User.findById(req.user.id);
+  if (user.wishlist.includes(product._id)) {
+    return res
+      .status(400)
+      .json({ status: "fail", message: "Product already in wishlist" });
+  }
+  user.wishlist.push(product.id);
+  await user.save();
+  return res.status(200).json({
+    success: true,
+    message: "This product has been added to the wishlist",
+    result: product,
+  });
+});
+
+export const wishlist = expressAsyncHandler(async (req, res) => {
+  const user = await User.findById(req.user.id);
+  const wishlist = user.wishlist;
+  if (wishlist.length === 0) {
+    res.status(200).json({ status: "true", message: "whishlist is empty" });
+  }
+  res.status(200).json({ status: "true", result: wishlist });
+});
+
+export const deleteWhishlist = expressAsyncHandler(async (req, res) => {
+  const product = await Product.findById(req.params.id);
+  if (!product) {
+    return res
+      .status(404)
+      .json({ status: "fail", message: "Product not found" });
+  }
+
+  const user = await User.findById(req.user.id);
+  if (!user.wishlist.includes(product._id)) {
+    return res
+      .status(400)
+      .json({ status: "fail", message: "Product not exist in wishlist" });
+  }
+  user.wishlist.pull(req.params.id);
+  await user.save();
+  return res.status(200).json({
+    success: true,
+    message: "This product has been removed from the wishlist",
+    result: product,
+  });
 });

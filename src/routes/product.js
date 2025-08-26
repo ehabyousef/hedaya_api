@@ -1,11 +1,17 @@
 import express from "express";
 import {
+  addToWishlist,
   createProduct,
+  deleteWhishlist,
   getAllProd,
   getSingleProd,
   updateProduc,
+  wishlist,
 } from "../controllers/productController.js";
-import { verifyToken } from "../middlewares/verifyToken.js";
+import {
+  verifyToken,
+  verifyTokenAndAuthorization,
+} from "../middlewares/verifyToken.js";
 import { upload } from "../middlewares/multerMiddleware.js";
 import { validate } from "../middlewares/validateMiddleware.js";
 import {
@@ -29,3 +35,9 @@ productRoute
   .route("/:id")
   .get(getSingleProd)
   .patch(productUpload, validate(productUpdateValidator), updateProduc);
+
+productRoute
+  .route("/wishlist")
+  .get(verifyTokenAndAuthorization, wishlist)
+  .post(verifyTokenAndAuthorization, addToWishlist)
+  .delete(verifyTokenAndAuthorization, deleteWhishlist);

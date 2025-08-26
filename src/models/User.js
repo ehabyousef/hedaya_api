@@ -27,10 +27,10 @@ const userSchema = new Schema(
       type: Boolean,
       default: false,
     },
+    wishlist: [Schema.Types.ObjectId],
   },
   { timestamps: true }
 );
 
 const User = mongoose.models.User || model("User", userSchema);
 export default User;
-
