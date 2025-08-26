@@ -11,8 +11,6 @@ export const productValidator = Joi.object({
 
   price: Joi.number().positive().precision(2).required(),
   discount: Joi.number().min(0).max(100).default(0),
-
-  favourite: Joi.boolean().default(false),
   status: Joi.string().valid("new", "used", "out_of_stock").default("new"),
 
   availableItems: Joi.number().integer().min(0).required(),
@@ -21,8 +19,8 @@ export const productValidator = Joi.object({
   category: Joi.string().hex().length(24).required(),
   subCategory: Joi.string().hex().length(24).required(),
   createdBy: Joi.string().hex().length(24).required(),
-  defaultImage: imageJoi.required(),
-  images: Joi.array().items(imageJoi).min(1).required(),
+  defaultImage: imageJoi,
+  images: Joi.array().items(imageJoi).min(1),
 });
 
 export const productUpdateValidator = Joi.object({
@@ -31,8 +29,6 @@ export const productUpdateValidator = Joi.object({
 
   price: Joi.number().positive().precision(2),
   discount: Joi.number().min(0).max(100).default(0),
-
-  favourite: Joi.boolean().default(false),
   status: Joi.string().valid("new", "used", "out_of_stock").default("new"),
 
   availableItems: Joi.number().integer().min(0),

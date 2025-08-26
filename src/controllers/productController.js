@@ -22,7 +22,6 @@ export const createProduct = expressAsyncHandler(async (req, res) => {
       description,
       price,
       discount,
-      favourite,
       status,
       availableItems,
       category,
@@ -32,7 +31,7 @@ export const createProduct = expressAsyncHandler(async (req, res) => {
     // Get user by token
     const createdBy = req.user.id;
 
-    let defaultImage = null;
+    let defaultImage;
     let images = [];
 
     // Handle file uploads
@@ -41,9 +40,14 @@ export const createProduct = expressAsyncHandler(async (req, res) => {
         req.files.defaultImage[0],
         "hedaya/products"
       );
+    } else {
+      return res.status(400).json({
+        success: false,
+        message: "Default image is required",
+      });
     }
 
-    if (req.files && req.files.images) {
+    if (req.files && req.files.images.length > 0) {
       images = await uploadMultipleImage(req.files.images, "hedaya/products");
     }
 
@@ -53,7 +57,6 @@ export const createProduct = expressAsyncHandler(async (req, res) => {
       description,
       price: parseFloat(price),
       discount: discount ? parseFloat(discount) : 0,
-      favourite: favourite === "true",
       status: status || "new",
       availableItems: parseInt(availableItems),
       category,
@@ -62,23 +65,6 @@ export const createProduct = expressAsyncHandler(async (req, res) => {
       defaultImage,
       images,
     };
-
-    // Validate the product data
-    const { error } = productValidator.validate(productData);
-
-    if (error) {
-      // Clean up uploaded images if validation fails
-      if (defaultImage) await deleteImage(defaultImage.id);
-      if (images.length > 0) {
-        const imageIds = images.map((img) => img.id);
-        await deleteMultipleImages(imageIds);
-      }
-
-      return res.status(400).json({
-        status: "fail",
-        message: error.details[0].message,
-      });
-    }
 
     // Create and save product
     const newProd = new Product(productData);
@@ -158,9 +144,6 @@ export const updateProduc = expressAsyncHandler(async (req, res) => {
     updateObj.price = parseFloat(req.body.price);
   if (req.body.discount !== undefined)
     updateObj.discount = parseFloat(req.body.discount);
-  if (req.body.favourite !== undefined)
-    updateObj.favourite =
-      req.body.favourite === "true" || req.body.favourite === true;
   if (req.body.status !== undefined) updateObj.status = req.body.status;
   if (req.body.availableItems !== undefined)
     updateObj.availableItems = parseInt(req.body.availableItems, 10);
