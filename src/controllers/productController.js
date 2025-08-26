@@ -197,13 +197,22 @@ export const addToWishlist = expressAsyncHandler(async (req, res) => {
   }
 
   const user = await User.findById(req.user.id);
-  if (user.wishlist.includes(product._id)) {
+
+  // Check if product already exists in wishlist
+  const existingItem = user.wishlist.find(
+    (item) => item.product.toString() === product._id.toString()
+  );
+
+  if (existingItem) {
     return res
       .status(400)
       .json({ status: "fail", message: "Product already in wishlist" });
   }
-  user.wishlist.push(product.id);
+
+  // Add product to wishlist with correct structure
+  user.wishlist.push({ product: product._id });
   await user.save();
+
   return res.status(200).json({
     success: true,
     message: "This product has been added to the wishlist",
@@ -211,13 +220,26 @@ export const addToWishlist = expressAsyncHandler(async (req, res) => {
   });
 });
 
-export const wishlist = expressAsyncHandler(async (req, res) => {
-  const user = await User.findById(req.user.id);
-  const wishlist = user.wishlist;
-  if (wishlist.length === 0) {
-    res.status(200).json({ status: "true", message: "whishlist is empty" });
+export const getWishlist = expressAsyncHandler(async (req, res) => {
+  const user = await User.findById(req.user.id).populate("wishlist.product");
+  if (!user) {
+    return res.status(404).json({ status: "fail", message: "user not found" });
   }
-  res.status(200).json({ status: "true", result: wishlist });
+  const wishlist = user.wishlist || [];
+
+  if (wishlist.length === 0) {
+    return res.status(200).json({
+      status: "success",
+      message: "Wishlist is empty",
+      result: [],
+    });
+  }
+
+  res.status(200).json({
+    status: "success",
+    count: wishlist.length,
+    result: wishlist,
+  });
 });
 
 export const deleteWhishlist = expressAsyncHandler(async (req, res) => {
@@ -229,16 +251,24 @@ export const deleteWhishlist = expressAsyncHandler(async (req, res) => {
   }
 
   const user = await User.findById(req.user.id);
-  if (!user.wishlist.includes(product._id)) {
+
+  // Find the wishlist item to remove
+  const wishlistItemIndex = user.wishlist.findIndex(
+    (item) => item.product.toString() === product._id.toString()
+  );
+
+  if (wishlistItemIndex === -1) {
     return res
       .status(400)
       .json({ status: "fail", message: "Product not exist in wishlist" });
   }
-  user.wishlist.pull(req.params.id);
+
+  // Remove the item from wishlist
+  user.wishlist.splice(wishlistItemIndex, 1);
   await user.save();
+
   return res.status(200).json({
     success: true,
     message: "This product has been removed from the wishlist",
-    result: product,
   });
 });

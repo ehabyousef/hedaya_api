@@ -12,6 +12,7 @@ import { subCateg } from "../src/routes/subCategory.js";
 import { passRoute } from "../src/routes/password.js";
 import { connectDB } from "../src/config/db.js";
 import { userRoute } from "../src/routes/user.js";
+import { cartRoute } from "../src/routes/cart.js";
 
 // Fix __dirname in ES modules
 const __filename = fileURLToPath(import.meta.url);
@@ -65,6 +66,7 @@ app.use("/api/users", userRoute);
 app.use("/api/categories", categRoute);
 app.use("/api/subcategories", subCateg);
 app.use("/api/products", productRoute);
+app.use("/api/cart", cartRoute);
 
 // Health check
 app.get("/api/health", (req, res) => {
@@ -88,6 +90,7 @@ app.get("/", (req, res) => {
       subcategories: "/api/subcategories",
       products: "/api/products",
       password: "/api/password",
+      cart: "/api/cart",
     },
   });
 });

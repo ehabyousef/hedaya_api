@@ -10,8 +10,8 @@ import { categRoute } from "./routes/category.js";
 import { productRoute } from "./routes/product.js";
 import { subCateg } from "./routes/subCategory.js";
 import { passRoute } from "./routes/password.js";
-import { connectDB } from "./config/db.js";
 import { userRoute } from "./routes/user.js";
+import { cartRoute } from "./routes/cart.js";
 
 const app = express();
 
@@ -40,6 +40,7 @@ app.use("/api/users", userRoute);
 app.use("/api/categories", categRoute);
 app.use("/api/subcategories", subCateg);
 app.use("/api/products", productRoute);
+app.use("/api/cart", cartRoute);
 
 // Health check
 app.get("/api/health", (req, res) => {
