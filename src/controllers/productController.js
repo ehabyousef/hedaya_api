@@ -2,17 +2,14 @@
 import expressAsyncHandler from "express-async-handler";
 import Product from "../../src/models/Products.js";
 import {
-  deleteImage,
   deleteMultipleImages,
   handleImageUpdate,
   uploadMultipleImage,
   uploadSingleImage,
 } from "../services/cloudinaryService.js";
-import { productValidator } from "../utils/productValidation.js";
 import slugify from "slugify";
 import mongoose from "mongoose";
 import User from "../models/User.js";
-// import { productValidator } from "../utils/productValidation.js";
 
 export const createProduct = expressAsyncHandler(async (req, res) => {
   try {
@@ -271,4 +268,142 @@ export const deleteWhishlist = expressAsyncHandler(async (req, res) => {
     success: true,
     message: "This product has been removed from the wishlist",
   });
+});
+
+export const getFilteredProducts = expressAsyncHandler(async (req, res) => {
+  const { categoryId, subCategoryId } = req.query;
+  let { page, limit, sort, status } = req.query;
+
+  // Build filter object dynamically
+  const filter = {};
+
+  // Add category filter if provided
+  if (categoryId) {
+    if (!mongoose.Types.ObjectId.isValid(categoryId)) {
+      return res.status(400).json({
+        status: "fail",
+        message: "Invalid category id",
+      });
+    }
+    filter.category = categoryId;
+  }
+
+  // Add subcategory filter if provided
+  if (subCategoryId) {
+    if (!mongoose.Types.ObjectId.isValid(subCategoryId)) {
+      return res.status(400).json({
+        status: "fail",
+        message: "Invalid subcategory id",
+      });
+    }
+    filter.subCategory = subCategoryId;
+  }
+
+  // Add status filter if provided
+  if (status) {
+    filter.status = status;
+  }
+
+  // Pagination
+  page = parseInt(page) || 1;
+  limit = parseInt(limit) || 10;
+  const skip = (page - 1) * limit;
+
+  // Sorting options
+  let sortOption = { createdAt: -1 }; // default: newest first
+
+  switch (sort) {
+    case "price_asc":
+      sortOption = { price: 1 };
+      break;
+    case "price_desc":
+      sortOption = { price: -1 };
+      break;
+    case "name_asc":
+      sortOption = { name: 1 };
+      break;
+    case "name_desc":
+      sortOption = { name: -1 };
+      break;
+    case "oldest":
+      sortOption = { createdAt: 1 };
+      break;
+    default:
+      sortOption = { createdAt: -1 };
+  }
+
+  try {
+    // Get filtered products with pagination
+    const products = await Product.find(filter)
+      .populate("category", "name slug")
+      .populate("subCategory", "name slug")
+      .populate("createdBy", "userName email")
+      .skip(skip)
+      .limit(limit)
+      .sort(sortOption);
+
+    // Get total count for pagination info
+    const totalProducts = await Product.countDocuments(filter);
+    const totalPages = Math.ceil(totalProducts / limit);
+
+    // Build filter description for response
+    let filterDescription = "All products";
+    if (categoryId && subCategoryId) {
+      filterDescription = "Products filtered by category and subcategory";
+    } else if (categoryId) {
+      filterDescription = "Products filtered by category";
+    } else if (subCategoryId) {
+      filterDescription = "Products filtered by subcategory";
+    }
+
+    if (status) {
+      filterDescription += ` with status: ${status}`;
+    }
+
+    if (products.length === 0) {
+      return res.status(200).json({
+        status: "success",
+        message: `No products found matching the specified filters`,
+        data: [],
+        filters: {
+          categoryId: categoryId || null,
+          subCategoryId: subCategoryId || null,
+          status: status || null,
+          sort: sort || "newest",
+        },
+        pagination: {
+          currentPage: page,
+          totalPages: 0,
+          totalProducts: 0,
+          hasNextPage: false,
+          hasPrevPage: false,
+        },
+      });
+    }
+
+    res.status(200).json({
+      status: "success",
+      message: filterDescription,
+      count: products.length,
+      data: products,
+      filters: {
+        categoryId: categoryId || null,
+        subCategoryId: subCategoryId || null,
+        status: status || null,
+        sort: sort || "newest",
+      },
+      pagination: {
+        currentPage: page,
+        totalPages,
+        totalProducts,
+        hasNextPage: page < totalPages,
+        hasPrevPage: page > 1,
+      },
+    });
+  } catch (error) {
+    res.status(500).json({
+      status: "error",
+      message: error.message,
+    });
+  }
 });

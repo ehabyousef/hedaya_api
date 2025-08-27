@@ -5,13 +5,13 @@ import {
   removeFromCart,
   updateCartQuantity,
 } from "../controllers/cartController.js";
-import { verifyTokenAndAuthorization } from "../middlewares/verifyToken.js";
+import { verifyToken } from "../middlewares/verifyToken.js";
 
 export const cartRoute = express.Router();
 
-cartRoute.use(verifyTokenAndAuthorization);
+cartRoute.use(verifyToken);
 
 cartRoute.post("/addToCart", addToCart);
 cartRoute.get("/allCart", getAllCart);
-cartRoute.post("/removeFromCart", removeFromCart);
-cartRoute.post("/updateQuantity", updateCartQuantity);
+cartRoute.delete("/removeFromCart", removeFromCart);
+cartRoute.put("/updateQuantity", updateCartQuantity);

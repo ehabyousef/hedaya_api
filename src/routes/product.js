@@ -7,6 +7,7 @@ import {
   getSingleProd,
   getWishlist,
   updateProduc,
+  getFilteredProducts, // New single endpoint
 } from "../controllers/productController.js";
 import { verifyToken } from "../middlewares/verifyToken.js";
 import { upload } from "../middlewares/multerMiddleware.js";
@@ -15,6 +16,7 @@ import {
   productUpdateValidator,
   productValidator,
 } from "../utils/productValidation.js";
+
 export const productRoute = express.Router();
 
 // Add multer middleware to handle form-data with files
@@ -27,6 +29,9 @@ productRoute
   .route("/")
   .post(verifyToken, productUpload, validate(productValidator), createProduct)
   .get(getAllProd);
+
+// Single flexible filter endpoint - must come before /:id routes
+productRoute.get("/filter", getFilteredProducts);
 
 // Wishlist routes - must come before /:id routes
 productRoute.get("/wishlist", verifyToken, getWishlist);

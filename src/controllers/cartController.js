@@ -60,7 +60,7 @@ export const getAllCart = expressAsyncHandler(async (req, res) => {
 
   const cart = await Cart.findOne({ user: userId }).populate(
     "products.product",
-    "name price image"
+    "name price defaultImage"
   );
 
   if (!cart) {

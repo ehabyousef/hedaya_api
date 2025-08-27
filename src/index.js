@@ -12,6 +12,7 @@ import { subCateg } from "./routes/subCategory.js";
 import { passRoute } from "./routes/password.js";
 import { userRoute } from "./routes/user.js";
 import { cartRoute } from "./routes/cart.js";
+import { seedDatabase } from "./data.js";
 
 const app = express();
 
@@ -46,7 +47,11 @@ app.use("/api/cart", cartRoute);
 app.get("/api/health", (req, res) => {
   res.json({ status: "OK", timestamp: new Date() });
 });
-
+// In your routes file
+app.post("/api/seed", async (req, res) => {
+  await seedDatabase();
+  res.json({ message: "Database seeded successfully!" });
+});
 // Error handling (should be last)
 app.use(NotFound);
 app.use(errorHandler);

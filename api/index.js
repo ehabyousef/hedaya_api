@@ -13,6 +13,7 @@ import { passRoute } from "../src/routes/password.js";
 import { connectDB } from "../src/config/db.js";
 import { userRoute } from "../src/routes/user.js";
 import { cartRoute } from "../src/routes/cart.js";
+import { seedDatabase } from "../src/data.js";
 
 // Fix __dirname in ES modules
 const __filename = fileURLToPath(import.meta.url);
@@ -26,12 +27,7 @@ app.use(
     contentSecurityPolicy: false, // Disable CSP for Vercel compatibility
   })
 );
-app.use(
-  cors({
-    origin: process.env.FRONTEND_URL || "*",
-    credentials: true,
-  })
-);
+app.use(cors());
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 app.use(morgan("combined"));
@@ -94,7 +90,10 @@ app.get("/", (req, res) => {
     },
   });
 });
-
+app.post("/api/seed", async (req, res) => {
+  await seedDatabase();
+  res.json({ message: "Database seeded successfully!" });
+});
 // Error handling (should be last)
 app.use(NotFound);
 app.use(errorHandler);
