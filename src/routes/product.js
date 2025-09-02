@@ -7,7 +7,8 @@ import {
   getSingleProd,
   getWishlist,
   updateProduc,
-  getFilteredProducts, // New single endpoint
+  getFilteredProducts,
+  deleteProduct, // New single endpoint
 } from "../controllers/productController.js";
 import { verifyToken } from "../middlewares/verifyToken.js";
 import { upload } from "../middlewares/multerMiddleware.js";
@@ -44,4 +45,5 @@ productRoute
 productRoute
   .route("/:id")
   .get(getSingleProd)
-  .patch(productUpload, validate(productUpdateValidator), updateProduc);
+  .patch(productUpload, validate(productUpdateValidator), updateProduc)
+  .delete(deleteProduct);

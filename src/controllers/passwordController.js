@@ -1,5 +1,5 @@
 import expressAsyncHandler from "express-async-handler";
-import  User  from "../models/User.js";
+import User from "../models/User.js";
 import jwt from "jsonwebtoken";
 import nodemailer from "nodemailer";
 import bcrypt from "bcryptjs";
@@ -21,7 +21,7 @@ export const sendForgetPassword = expressAsyncHandler(async (req, res) => {
 
   const baseUrl =
     process.env.FRONTEND_URL || `http://localhost:${process.env.PORT || 5001}`;
-  const link = `${baseUrl}/api/password/reset-password/${user._id}/${token}`;
+  const link = `${baseUrl}auth/reset-password/${user._id}/${token}`;
 
   const transport = nodemailer.createTransport({
     service: "gmail",
@@ -38,7 +38,7 @@ export const sendForgetPassword = expressAsyncHandler(async (req, res) => {
     html: `
         <div>
           <h4>click the link below to reset your password</h4>
-          <p>${link}</p>
+          <a href=${link}>link</a>
         </div>
     `,
   };
