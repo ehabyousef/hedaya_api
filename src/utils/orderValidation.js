@@ -2,7 +2,7 @@ import joi from "joi";
 
 export const createOrderValidation = joi
   .object({
-    address: joi.string().min(10).required(),
+    address: joi.string().min(3).required(),
     coupon: joi.string().length(5),
     phone: joi
       .string()

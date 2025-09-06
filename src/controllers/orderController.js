@@ -10,18 +10,16 @@ export const createOrder = expressAsyncHandler(async (req, res) => {
   const { payment, address, phone } = req.body;
   const cart = await Cart.findOne({ user: req.user.id });
   const products = cart?.products;
-  if (products.length < 1) return next(new Error("Empty cart!"));
+  if (products.length < 1) return new Error("Empty cart!");
   let orderProducts = [];
   let orderPrice = 0;
   for (let index = 0; index < products.length; index++) {
     const product = await Product.findById(products[index].id);
     if (!product)
-      return next(new Error(`product ${products[i].productId} not found!`));
+      return new Error(`product ${products[i].productId} not found!`);
     if (!product.inStock(products[index].quantity)) {
-      return next(
-        new Error(
-          `${product.name} out of stock, only ${product.availableItems} items are left`
-        )
+      return new Error(
+        `${product.name} out of stock, only ${product.availableItems} items are left`
       );
     }
     orderProducts.push({
