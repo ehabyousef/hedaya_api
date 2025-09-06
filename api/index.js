@@ -14,6 +14,7 @@ import { connectDB } from "../src/config/db.js";
 import { userRoute } from "../src/routes/user.js";
 import { cartRoute } from "../src/routes/cart.js";
 import { seedDatabase } from "../src/data.js";
+import { orderRoute } from "../src/routes/order.js";
 
 // Fix __dirname in ES modules
 const __filename = fileURLToPath(import.meta.url);
@@ -63,6 +64,7 @@ app.use("/api/categories", categRoute);
 app.use("/api/subcategories", subCateg);
 app.use("/api/products", productRoute);
 app.use("/api/cart", cartRoute);
+app.use("/api/order", orderRoute);
 
 // Health check
 app.get("/api/health", (req, res) => {
@@ -87,6 +89,7 @@ app.get("/", (req, res) => {
       products: "/api/products",
       password: "/api/password",
       cart: "/api/cart",
+      order: "/api/order",
     },
   });
 });
