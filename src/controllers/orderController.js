@@ -39,9 +39,9 @@ export const createOrder = expressAsyncHandler(async (req, res) => {
   let orderPrice = 0;
 
   for (let index = 0; index < products.length; index++) {
-    const product = await Product.findById(products[index].id);
+    const product = await Product.findById(products[index].product._id);
     if (!product) {
-      throw new Error(`Product not found`);
+      throw new Error(`Product not found ${index}`);
     }
 
     // Check stock (adjust based on your product schema)
