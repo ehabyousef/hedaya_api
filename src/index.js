@@ -43,7 +43,7 @@ app.use("/api/categories", categRoute);
 app.use("/api/subcategories", subCateg);
 app.use("/api/products", productRoute);
 app.use("/api/cart", cartRoute);
-app.use("/order", orderRoute);
+app.use("/api/order", orderRoute);
 
 // Health check
 app.get("/api/health", (req, res) => {

@@ -13,8 +13,8 @@ import { passRoute } from "../src/routes/password.js";
 import { connectDB } from "../src/config/db.js";
 import { userRoute } from "../src/routes/user.js";
 import { cartRoute } from "../src/routes/cart.js";
-import { seedDatabase } from "../src/data.js";
 import { orderRoute } from "../src/routes/order.js";
+import { seedDatabase } from "../src/data.js";
 
 // Fix __dirname in ES modules
 const __filename = fileURLToPath(import.meta.url);
@@ -36,9 +36,6 @@ app.use(morgan("combined"));
 // Set view engine and views directory
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "../src/views"));
-
-// Static files - Note: Vercel handles static files differently
-app.use("/images", express.static(path.join(__dirname, "../images")));
 
 // Database connection middleware for serverless
 let isConnected = false;

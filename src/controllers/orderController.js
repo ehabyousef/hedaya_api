@@ -1,7 +1,7 @@
 import expressAsyncHandler from "express-async-handler";
-import Cart from "../models/Cart";
-import Product from "../models/Products";
-import { orderModel } from "../models/order";
+import Cart from "../models/Cart.js";
+import Product from "../models/Products.js";
+import { orderModel } from "../models/order.js";
 import Stripe from "stripe";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET); // ensure STRIPE_SECRET_KEY in .env
@@ -88,7 +88,7 @@ export const webhook = expressAsyncHandler(async (req, res) => {
   let event = stripe.webhooks.constructEvent(
     request.body,
     sig,
-    process.env.END_POINT_SECRT
+    process.env.STRIPE_WEBHOOK_SECRET
   );
 
   const orderId = event.data.object.metadata.order_id;

@@ -1,8 +1,8 @@
 import express from "express";
-import { verifyToken } from "../middlewares/verifyToken";
-import { validate } from "../middlewares/validateMiddleware";
-import { createOrderValidation } from "../utils/orderValidation";
-import { createOrder, webhook } from "../controllers/orderController";
+import { verifyToken } from "../middlewares/verifyToken.js";
+import { validate } from "../middlewares/validateMiddleware.js";
+import { createOrderValidation } from "../utils/orderValidation.js";
+import { createOrder, webhook } from "../controllers/orderController.js";
 
 export const orderRoute = express.Router();
 
