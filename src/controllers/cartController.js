@@ -150,7 +150,7 @@ export const updateCartQuantity = expressAsyncHandler(async (req, res) => {
   await cart.save();
 
   // Return updated cart
-  await cart.populate("products.product", "name price image");
+  await cart.populate("products.product", "name price defaultImage");
 
   res.status(200).json({
     success: true,
