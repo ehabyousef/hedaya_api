@@ -13,6 +13,7 @@ import { passRoute } from "./routes/password.js";
 import { userRoute } from "./routes/user.js";
 import { cartRoute } from "./routes/cart.js";
 import { seedDatabase } from "./data.js";
+import { orderRoute } from "./routes/order.js";
 
 const app = express();
 
@@ -42,6 +43,7 @@ app.use("/api/categories", categRoute);
 app.use("/api/subcategories", subCateg);
 app.use("/api/products", productRoute);
 app.use("/api/cart", cartRoute);
+app.use("/order", orderRoute);
 
 // Health check
 app.get("/api/health", (req, res) => {
