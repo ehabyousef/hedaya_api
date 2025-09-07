@@ -101,7 +101,7 @@ export const removeFromCart = expressAsyncHandler(async (req, res) => {
   cart.calculateTotalPrice();
 
   await cart.save();
-
+  await cart.populate("products.product", "name price defaultImage");
   res.status(200).json({
     success: true,
     message: "Product removed from cart",
